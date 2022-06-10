@@ -11,8 +11,8 @@ struct MainView: View {
     @State private var showMenu: Bool = false
     
     // Offset for both drag gesture and showing menu
-    @State var offset: CGFloat
-    @State var lastStoredOffset: CGFloat
+    @State private var offset: CGFloat
+    @State private var lastStoredOffset: CGFloat
     
     // Gesture offset
     @GestureState var gestureOffset: CGFloat = 0
@@ -40,29 +40,16 @@ struct MainView: View {
                 SideMenuView(showMenu: $showMenu, sideBarWidth: sideBarWidth)
                     .offset(x: offset >= 0 ? 0 : offset)
             }
-            .overlay(
-                Rectangle()
-                    .fill(
-                        Color.primary.opacity(Double((1 - (abs(offset) / sideBarWidth)) / 5))
-                    )
-                    .ignoresSafeArea(.container, edges: .vertical)
-                    .onTapGesture {
-                        withAnimation {
-                            showMenu.toggle()
-                        }
+            .gesture(
+                DragGesture()
+                    .updating($gestureOffset, body: { value, out, _ in
+                        out = value.translation.width
+                    })
+                    .onEnded { value in
+                        onEnd(value: value)
                     }
             )
         }
-        .gesture(
-            DragGesture()
-                .updating($gestureOffset, body: { value, out, _ in
-                    out = value.translation.width
-                })
-                .onEnded { value in
-                    onEnd(value: value)
-                }
-        )
-        
         // Hide nav bar
         .navigationBarTitleDisplayMode(.inline)
         .navigationBarHidden(true)

@@ -19,7 +19,15 @@ struct SideMenuView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
-            Color.blue
+          Text("Click to close side menu")
+                .foregroundColor(.white)
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .background(Color.blue)
+                .onTapGesture {
+                    withAnimation {
+                        self.showMenu = false
+                    }
+                }
         }
         .frame(width: sideBarWidth)
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
